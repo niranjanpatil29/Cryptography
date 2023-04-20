@@ -1,2 +1,2 @@
 # Cryptography
-Encryption and Decryption using python
+Encryption and Decryption of message using python
