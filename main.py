@@ -1,91 +1,62 @@
 from tkinter import *
-from tkinter import messagebox
-import base64
 
-screen = Tk()
-
-screen.geometry("420x420")
-screen.title("Encryption and Decryption")
-screen.configure(background="light gray")
-
-#function for encryption
 def encrypt():
-    password = code.get()
-    if password =="1234":
-        screen1 = Toplevel(screen)
-        screen1.title("Encryption")
-        screen1.geometry("300x200")
-        screen1.configure(background="light gray")
+    plaintext = plaintext_entry.get()
+    shift = int(shift_entry.get())
+    encrypted_text = ""
+    for char in plaintext:
+        if char.isalpha():
+            if char.isupper():
+                encrypted_char = chr((ord(char) - 65 + shift) % 26 + 65)
+            else:
+                encrypted_char = chr((ord(char) - 97 + shift) % 26 + 97)
+            encrypted_text += encrypted_char
+        else:
+            encrypted_text += char
+    result_label.configure(text="Encrypted Text: " + encrypted_text)
 
-        #usertext
-        message = textbox.get(1.0,END) #first line zero char
-        encode_message = message.encode("ascii")
-        base64_bytes = base64.b64encode(encode_message)
-        encrypt = base64_bytes.decode("ascii")
-
-        Label(screen1,text="Encrypted message",font="arial 10 bold",bg="light gray").place(x=5,y=6)
-
-        textbox2 = Text(screen1,bd=0,font="20",wrap=WORD)
-        textbox2.place(x=5, y=30, width=290, height=120)
-        textbox2.insert(END,encrypt)
-
-    elif(password==""):
-        messagebox.showerror("Error","Please enter the secret key")
-
-    elif(password!="1234"):
-        messagebox.showerror("Invalid","Invalid secret key")
-
-
-#function for decryption
 def decrypt():
-    password = code.get()
-    if password =="1234":
-        screen2 = Toplevel(screen)
-        screen2.title("Decryption")
-        screen2.geometry("300x200")
-        screen2.configure(background="light gray")
+    ciphertext = ciphertext_entry.get()
+    shift = int(shift_entry.get())
+    decrypted_text = ""
+    for char in ciphertext:
+        if char.isalpha():
+            if char.isupper():
+                decrypted_char = chr((ord(char) - 65 - shift) % 26 + 65)
+            else:
+                decrypted_char = chr((ord(char) - 97 - shift) % 26 + 97)
+            decrypted_text += decrypted_char
+        else:
+            decrypted_text += char
+    result_label.configure(text="Decrypted Text: " + decrypted_text)
 
-        #usertext
-        message = textbox.get(1.0,END) #first line zero char
-        encode_message = message.encode("ascii")
-        base64_bytes = base64.b64decode(encode_message)
-        decrypt = base64_bytes.decode("ascii")
+root = Tk()
+root.title("Caesar Cipher")
+root.geometry("450x300")
 
-        Label(screen2,text="Decrypted message",font="arial 10 bold",bg="light gray").place(x=5,y=6)
+# Create labels and entries
+plaintext_label = Label(root, text="Plaintext:")
+plaintext_label.grid(row=0, column=0, padx=10, pady=10)
+plaintext_entry = Entry(root,width=30)
+plaintext_entry.grid(row=0, column=1, padx=10, pady=10)
 
-        textbox2 = Text(screen2,bd=0,font="20",wrap=WORD)
-        textbox2.place(x=5, y=30, width=290, height=120)
-        textbox2.insert(END,decrypt)
+ciphertext_label = Label(root, text="Ciphertext:")
+ciphertext_label.grid(row=8, column=0, padx=10, pady=30)
+ciphertext_entry = Entry(root,width=30)
+ciphertext_entry.grid(row=8, column=1, padx=30, pady=30)
 
-    elif(password==""):
-        messagebox.showerror("Error","Please enter the secret key")
+shift_label = Label(root, text="Key:")
+shift_label.grid(row=20, column=0, padx=10, pady=10)
+shift_entry = Entry(root,width=30)
+shift_entry.grid(row=20, column=1, padx=10, pady=10)
 
-    elif(password!="1234"):
-        messagebox.showerror("Invalid","Invalid secret key")
+result_label = Label(root, text="")
+result_label.grid(row=25, column=1, columnspan=2)
 
+encrypt_button = Button(root, text="Encrypt", bg="green" ,fg="white",command=encrypt)
+encrypt_button.grid(row=50, column=0,padx=50, pady=50)
 
-#function for reset button
-def reset():
-    textbox.delete(1.0,END)
-    code.set("")
+decrypt_button = Button(root, text="Decrypt", bg="red" ,fg="white",command=decrypt)
+decrypt_button.grid(row=50, column=1)
 
-#Heading
-Label(screen,text="Write a message",font="arial 10 bold",bg="light gray").place(x=10,y=6)
-
-#Textbox
-textbox = Text(screen,bd=0,font="20")
-textbox.place(x=10,y=40,width=400,height=120)
-
-#Key
-Label(screen,text="Enter Secret Key",font="arial 10 bold",bg="light gray").place(x=10,y=180)
-
-#keyentry
-code=StringVar()
-Entry(textvariable=code,bd=0,font="15",show="*").place(x=130,y=180)
-
-#buttons
-Button(screen,bd=0,text="ENCRYPT",font="arial 15 bold",bg="green",fg="white",command=encrypt).place(x=40,y=280,width=140)
-Button(screen,bd=0,text="DECRYPT",font="arial 15 bold",bg="red",fg="white",command=decrypt).place(x=240,y=280,width=140)
-Button(screen,bd=0,text="RESET",font="arial 15 bold",bg="sky blue",fg="white",command=reset).place(x=140,y=350,width=140)
-
-mainloop()
+root.mainloop()
